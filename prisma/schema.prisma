@@ -3,7 +3,8 @@
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  // url      = env("DATABASE_URL")
+  url="mysql://bastaruser:qwerty1995@mysql-32533-0.cloudclusters.net:32533/newbastar"
 }
 
 generator client {
