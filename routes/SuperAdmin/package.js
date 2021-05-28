@@ -7,7 +7,7 @@ const validator = require('validator');
 const keys = require('../../config/keys');
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.creasteTransport({
     host: "smtp.googlemail.com",
     port:465,
     secure: true,
@@ -130,7 +130,7 @@ router.post('/adddestination',(req,res)=>{
         type:req.body.type,
     };
     prisma.destination.create({
-        data:pkg
+        data:dest
     }).then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
     .catch((e)=>{ res.status(406).json(e); });
 
@@ -162,7 +162,7 @@ router.put('/editdestination/:id',(req,res)=>{
         type:req.body.type,
     };
 
-    prisma.destination.update({where:{ id : Number(req.params.id) },data:profile})
+    prisma.destination.update({where:{ id : Number(req.params.id) },data:pkg})
                       .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
                       .catch((e)=>{ res.status(406).json(e); });
 }); 

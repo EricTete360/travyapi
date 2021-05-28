@@ -52,7 +52,7 @@ router.post('/addpackage',verifyAdminToken,(req,res)=>{
         longitude:req.body.longitude,
         inclusion:req.body.inclusion,
         exclusion:req.body.exclusion,
-        adminId:req.body.adminId,
+        adminId:req.user.id,
         status:req.body.status,
         categoryId:req.body.categoryId,
         type:req.body.type,
@@ -92,7 +92,7 @@ router.put('/editpackage/:id',verifyAdminToken,(req,res)=>{
         type:req.body.type,
     };
 
-    prisma.package.update({where:{ id : Number(req.params.id) },data:profile})
+    prisma.package.update({where:{ id : Number(req.params.id) },data:pkg})
                       .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
                       .catch((e)=>{ res.status(406).json(e); });
 });
@@ -122,7 +122,7 @@ router.post('/adddestination',verifyAdminToken,(req,res)=>{
         type:req.body.type,
     };
     prisma.destination.create({
-        data:pkg
+        data:dest
     }).then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
     .catch((e)=>{ res.status(406).json(e); });
 
@@ -148,13 +148,13 @@ router.put('/editdestination/:id',verifyAdminToken,(req,res)=>{
         location:req.body.location,
         latitude:req.body.latitude,
         longitude:req.body.longitude,
-        adminId:req.body.adminId,
+        adminId:req.user.id,
         status:req.body.status,
         categoryId:req.body.categoryId,
         type:req.body.type,
     };
 
-    prisma.destination.update({where:{ id : Number(req.params.id) },data:profile})
+    prisma.destination.update({where:{ id : Number(req.params.id) },data:pkg})
                       .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
                       .catch((e)=>{ res.status(406).json(e); });
 }); 
@@ -208,7 +208,7 @@ router.get('/category',verifyAdminToken,async (req,res)=>{
     else{
         res.status(404).json({msg:"No Categories Available"});
     }
-})
+});
 
 router.put('/updatecategory/:id',verifyAdminToken,async (res,req)=>{
     const {title,description,status} = req.body ;
@@ -227,7 +227,69 @@ router.put('/updatecategory/:id',verifyAdminToken,async (res,req)=>{
     prisma.category.update({where:{ id : Number(req.params.id) },data:ucat})
                       .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
                       .catch((e)=>{ res.status(406).json(e); });
+});
+
+
+router.get('/adprofileView',verifyToken,async (req,res)=>{
+    const profile = await prisma.adminUserProfile.findUnique({
+        where:{ id : Number(req.user.id) },
+        select:{
+            username:true,
+            email:true,
+            mobile:true,
+            profile:true
+        }
+    });
+    res.json(profile);
 })
 
+router.post('/adprofile',verifyToken,(req,res)=>{
+
+    const {chname,photo,address,city,state,pincode} = req.body ;
+
+    if (!chname||!photo||!address||!city||!state||!pincode) {
+      return res.status(422).json({ error:"All Fields Required" });
+    }
+  
+    const profile = {
+        adminuserId:req.user.id,
+        chname:req.body.chname,
+        photo:req.body.photo,
+        address:req.body.address,
+        city:req.body.city,
+        state:req.body.state,
+        pincode:req.body.pincode,
+    };
+    prisma.adminUserProfile.create({
+        data:profile
+    }).then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
+    .catch((e)=>{ res.status(406).json(e); });
+
+});
+
+
+router.put('/editadprofile/:id',verifyToken,(req,res)=>{
+
+
+    const {chname,photo,address,city,state,pincode} = req.body ;
+
+    if (!chname||!photo||!address||!city||!state||!pincode) {
+      return res.status(422).json({ error:"All Fields Required" });
+    }
+
+    const profile = {
+        adminuserId:req.user.id,
+        chname:req.body.chname,
+        photo:req.body.photo,
+        address:req.body.address,
+        city:req.body.city,
+        state:req.body.state,
+        pincode:req.body.pincode,
+    };
+
+    prisma.adminUserProfile.update({where:{ id : Number(req.params.id) },data:profile})
+                      .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
+                      .catch((e)=>{ res.status(406).json(e); });
+});
 // router.get("/")
 module.exports = router;
