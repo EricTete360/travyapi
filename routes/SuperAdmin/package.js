@@ -7,7 +7,7 @@ const validator = require('validator');
 const keys = require('../../config/keys');
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
-const transporter = nodemailer.creasteTransport({
+const transporter = nodemailer.createTransport({
     host: "smtp.googlemail.com",
     port:465,
     secure: true,

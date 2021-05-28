@@ -230,7 +230,7 @@ router.put('/updatecategory/:id',verifyAdminToken,async (res,req)=>{
 });
 
 
-router.get('/adprofileView',verifyToken,async (req,res)=>{
+router.get('/adprofileView',verifyAdminToken,async (req,res)=>{
     const profile = await prisma.adminUserProfile.findUnique({
         where:{ id : Number(req.user.id) },
         select:{
@@ -243,7 +243,7 @@ router.get('/adprofileView',verifyToken,async (req,res)=>{
     res.json(profile);
 })
 
-router.post('/adprofile',verifyToken,(req,res)=>{
+router.post('/adprofile',verifyAdminToken,(req,res)=>{
 
     const {chname,photo,address,city,state,pincode} = req.body ;
 
@@ -268,7 +268,7 @@ router.post('/adprofile',verifyToken,(req,res)=>{
 });
 
 
-router.put('/editadprofile/:id',verifyToken,(req,res)=>{
+router.put('/editadprofile/:id',verifyAdminToken,(req,res)=>{
 
 
     const {chname,photo,address,city,state,pincode} = req.body ;
