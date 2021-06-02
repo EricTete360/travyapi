@@ -52,16 +52,21 @@ model OtpProfile {
 
 model AdminUser {
   @@map(name:"adminuser")
-  id               Int      @id @default(autoincrement())
-  name             String
-  email            String   @unique
-  mobile           String   @unique
-  password         String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  admuser          AdminUserProfile[]
-  package          Package[]
-  destination      Destination[]
+  id                 Int      @id @default(autoincrement())
+  name               String
+  email              String   @unique
+  mobile             String   @unique
+  password           String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  admuser            AdminUserProfile[]
+ 
+  packagect            PackageCategory[]
+  destinationct        DestinationCategory[]
+  package            Package[]
+  destination        Destination[]
+
+
 }
 
 model AdminUserProfile {
@@ -73,7 +78,7 @@ model AdminUserProfile {
   city            String
   state           String
   pincode         String
-  user            AdminUser    @relation(fields: [adminuserId], references: [id])
+  aduser          AdminUser    @relation(fields: [adminuserId], references: [id])
   adminuserId     Int  
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
@@ -92,22 +97,41 @@ model SuperAdminUser {
   updatedAt        DateTime @updatedAt
 }
 
-model Category {
-  @@map(name:"category")
-  id               Int      @id @default(autoincrement())
-  title            String
-  description      String
-  status           String
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  package          Package[]
-  destination      Destination[]
+model PackageCategory {
+  id                        Int                @id @default(autoincrement())
+  title                     String
+  description               String
+  status                    Boolean
+  createdAt                 DateTime           @default(now())
+  updatedAt                 DateTime           @updatedAt
+  aduser                    AdminUser          @relation(fields: [adminuserId], references: [id])
+  adminuserId               Int  
+  package                   Package            @relation(fields: [pkId], references: [id])
+  pkId                      Int 
 
+  @@map("PackageCategories")
 }
+
+model DestinationCategory {
+  id                        Int                   @id @default(autoincrement())
+  title                     String
+  description               String
+  status                    Boolean
+  createdAt                 DateTime               @default(now())
+  updatedAt                 DateTime               @updatedAt
+  aduser                    AdminUser              @relation(fields: [adminuserId], references: [id])
+  adminuserId               Int  
+  destination               Destination            @relation(fields: [desId], references: [id])
+  desId                     Int 
+
+
+  @@map("DestinationCategories")
+}
+
 
 model Package {
   @@map(name:"package")
-  id               Int      @id @default(autoincrement())
+  id               Int        @id @default(autoincrement())
   title            String
   subtitle         String
   videoURL         String
@@ -120,13 +144,12 @@ model Package {
   latitude         String 
   longitude        String 
   type             String
-  status           String
-  adminRel         AdminUser    @relation(fields: [adminId], references: [id])
-  adminId          Int
-  categoryRel      Category     @relation(fields: [categoryId], references: [id])
-  categoryId       Int
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  status           String 
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt 
+  aduser           AdminUser    @relation(fields: [adminuserId], references: [id])
+  adminuserId      Int  
+  pc               PackageCategory[]
 }
 
 model Destination {
@@ -143,11 +166,9 @@ model Destination {
   longitude        String 
   type             String
   status           String
-  adminRel         AdminUser    @relation(fields: [adminId], references: [id])
-  adminId          Int
-  categoryRel      Category     @relation(fields: [categoryId], references: [id])
-  categoryId       Int
+  aduser           AdminUser    @relation(fields: [adminuserId], references: [id])
+  adminuserId      Int  
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  des              DestinationCategory[]
 }
-

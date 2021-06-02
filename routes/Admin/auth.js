@@ -36,7 +36,6 @@ router.post('/register',(req,res)=>{
           })
 });
 
-
 router.post('/login',(req,res)=>{
     prisma.adminUser.findUnique({ where: { email: req.body.email } })
     .then((user)=>{

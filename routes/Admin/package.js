@@ -6,12 +6,31 @@ const validator = require('validator');
 const keys = require('../../config/keys');
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
-
 const verifyAdminToken = require('../../middleware/verifyJWTadmin');
 
 
 router.get('/package',verifyAdminToken,async (req,res)=>{
-    const pkg = await prisma.package.findMany({where:{adminId:req.user.id}});
+    const pkg = await prisma.package.findMany({
+        where:{adminuserId:req.user.id},
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            inclusion:true,
+            exclusion:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            pc:true
+        }
+    });
     if(pkg!=0){
         res.status(200).json(pkg);
     }
@@ -19,18 +38,20 @@ router.get('/package',verifyAdminToken,async (req,res)=>{
         res.status(404).json({msg:"No Packages Available"})
     }
   
-})
+});
 
 router.get('/package/:id',verifyAdminToken,async (req,res)=>{
-    const spkg = await prisma.package.findUnique({where:{id:Number(req.params.id)}});
+    const spkg = await prisma.package.findUnique({
+        where:{id:Number(req.params.id)},
+        select:{pc:true}
+    });
     if(spkg!=0){
         res.status(200).json(spkg);
     }
     else{
         res.status(404).json({msg:"No Packages Available"})
     }
-})
-
+});
 
 router.post('/addpackage',verifyAdminToken,(req,res)=>{
 
@@ -52,9 +73,8 @@ router.post('/addpackage',verifyAdminToken,(req,res)=>{
         longitude:req.body.longitude,
         inclusion:req.body.inclusion,
         exclusion:req.body.exclusion,
-        adminId:req.user.id,
+        adminuserId:Number(req.user.id),
         status:req.body.status,
-        categoryId:req.body.categoryId,
         type:req.body.type,
     };
     prisma.package.create({
@@ -63,7 +83,6 @@ router.post('/addpackage',verifyAdminToken,(req,res)=>{
     .catch((e)=>{ res.status(406).json(e); });
 
 });
-
 
 router.put('/editpackage/:id',verifyAdminToken,(req,res)=>{
 
@@ -86,9 +105,8 @@ router.put('/editpackage/:id',verifyAdminToken,(req,res)=>{
         longitude:req.body.longitude,
         inclusion:req.body.inclusion,
         exclusion:req.body.exclusion,
-        adminId:req.body.adminId,
+        adminuserId:Number(req.user.id),
         status:req.body.status,
-        categoryId:req.body.categoryId,
         type:req.body.type,
     };
 
@@ -96,7 +114,6 @@ router.put('/editpackage/:id',verifyAdminToken,(req,res)=>{
                       .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
                       .catch((e)=>{ res.status(406).json(e); });
 });
-
 
 router.post('/adddestination',verifyAdminToken,(req,res)=>{
 
@@ -116,9 +133,8 @@ router.post('/adddestination',verifyAdminToken,(req,res)=>{
         location:req.body.location,
         latitude:req.body.latitude,
         longitude:req.body.longitude,
-        adminId:req.body.adminId,
+        adminuserId:Number(req.user.id),
         status:req.body.status,
-        categoryId:req.body.categoryId,
         type:req.body.type,
     };
     prisma.destination.create({
@@ -128,13 +144,12 @@ router.post('/adddestination',verifyAdminToken,(req,res)=>{
 
 });
 
-
 router.put('/editdestination/:id',verifyAdminToken,(req,res)=>{
 
 
-     const {title,subtitle,description,images,videoURL,inclusion,exclusion,price,location,longitude,latitude,type,status} = req.body ;
+     const {title,subtitle,description,images,videoURL,price,location,longitude,latitude,type,status} = req.body ;
 
-    if (!title||!subtitle||!description||!price||!location||!inclusion||!exclusion||!status||!longitude||!latitude||!type) {
+    if (!title||!subtitle||!description||!price||!location||!status||!longitude||!latitude||!type) {
       return res.status(422).json({ error:"All Fields Required" });
     }
   
@@ -148,9 +163,8 @@ router.put('/editdestination/:id',verifyAdminToken,(req,res)=>{
         location:req.body.location,
         latitude:req.body.latitude,
         longitude:req.body.longitude,
-        adminId:req.user.id,
+        adminuserId:Number(req.user.id),
         status:req.body.status,
-        categoryId:req.body.categoryId,
         type:req.body.type,
     };
 
@@ -160,7 +174,25 @@ router.put('/editdestination/:id',verifyAdminToken,(req,res)=>{
 }); 
 
 router.get('/destination',verifyAdminToken,async (req,res)=>{
-    const dest = await prisma.destination.findMany({where:{adminId:req.user.id}});
+    const dest = await prisma.destination.findMany({
+        where:{adminuserId:req.user.id},
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            des:true
+        }
+    });
     if(dest!=0){
         res.status(200).json(dest);
     }
@@ -168,19 +200,37 @@ router.get('/destination',verifyAdminToken,async (req,res)=>{
         res.status(404).json({msg:"No Destination Packages Available"})
     }
   
-})
+});
 
 router.get('/destination/:id',verifyAdminToken,async (req,res)=>{
-    const dest = await prisma.destination.findUnique({where:{id:Number(req.params.id)}});
+    const dest = await prisma.destination.findUnique({
+        where:{id:Number(req.params.id)},
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            des:true
+        }
+    });
     if(dest!=0){
         res.status(200).json(dest);
     }
     else{
         res.status(404).json({msg:"No Destination Packages Available"})
     }
-})
+});
 
-router.post('/addCategory',verifyAdminToken,async (req,res)=>{
+router.post('/addPackageCategory',verifyAdminToken,async (req,res)=>{
     const {title,description,status} = req.body ;
 
     if (!title||!description||!status) {
@@ -188,47 +238,37 @@ router.post('/addCategory',verifyAdminToken,async (req,res)=>{
     }
     const cat = {
         title:req.body.title,
-        
         description:req.body.description,
-      
-        status:req.body.status,
+        status:Boolean(req.body.status),
+        adminuserId:req.user.id,
+        pkId:Number(req.body.pkId)
     };
-    prisma.category.create({
+    prisma.packageCategory.create({
         data:cat
     }).then((obj)=>{
         res.status(200).json({obj,mes:"Data Entered Successfully"})
     }).catch((err)=>{ res.status(406).json(err); })
 }); 
 
-router.get('/category',verifyAdminToken,async (req,res)=>{
-    const cate = await prisma.category.findMany();
-    if (cate!=0) {
-        res.status(200).json(cate);
-    }
-    else{
-        res.status(404).json({msg:"No Categories Available"});
-    }
-});
-
-router.put('/updatecategory/:id',verifyAdminToken,async (res,req)=>{
+router.post('/addDestinationCategory',verifyAdminToken,async (req,res)=>{
     const {title,description,status} = req.body ;
 
     if (!title||!description||!status) {
       return res.status(422).json({ error:"All Fields Required" });
     }
-    const ucat = {
+    const cat = {
         title:req.body.title,
-        
         description:req.body.description,
-      
-        status:req.body.status,
+        status:Boolean(req.body.status),
+        adminuserId:req.user.id,
+        desId:Number(req.body.desId)
     };
-
-    prisma.category.update({where:{ id : Number(req.params.id) },data:ucat})
-                      .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
-                      .catch((e)=>{ res.status(406).json(e); });
-});
-
+    prisma.destinationCategory.create({
+        data:cat
+    }).then((obj)=>{
+        res.status(200).json({obj,mes:"Data Entered Successfully"})
+    }).catch((err)=>{ res.status(406).json(err); })
+}); 
 
 router.get('/adprofileView',verifyAdminToken,async (req,res)=>{
     const profile = await prisma.adminUserProfile.findUnique({
@@ -241,7 +281,7 @@ router.get('/adprofileView',verifyAdminToken,async (req,res)=>{
         }
     });
     res.json(profile);
-})
+});
 
 router.post('/adprofile',verifyAdminToken,(req,res)=>{
 
@@ -267,7 +307,6 @@ router.post('/adprofile',verifyAdminToken,(req,res)=>{
 
 });
 
-
 router.put('/editadprofile/:id',verifyAdminToken,(req,res)=>{
 
 
@@ -291,5 +330,6 @@ router.put('/editadprofile/:id',verifyAdminToken,(req,res)=>{
                       .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
                       .catch((e)=>{ res.status(406).json(e); });
 });
+
 // router.get("/")
 module.exports = router;

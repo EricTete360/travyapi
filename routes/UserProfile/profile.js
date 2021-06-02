@@ -75,11 +75,30 @@ router.put('/editprofile/:id',verifyToken,(req,res)=>{
 
 // Package and Destination
 // No Token Required
+
+
 router.get('/package',async (req,res)=>{
-    const pkg = await prisma.package.findMany({select:{
-        adminRel:true,
-        categoryRel:true
-    }});
+    const pkg = await prisma.package.findMany({
+        
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            inclusion:true,
+            exclusion:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            pc:true
+        }
+    });
     if(pkg!=0){
         res.status(200).json(pkg);
     }
@@ -87,26 +106,58 @@ router.get('/package',async (req,res)=>{
         res.status(404).json({msg:"No Packages Available"})
     }
   
-})
+});
 
 router.get('/package/:id',async (req,res)=>{
-    const spkg = await prisma.package.findUnique({where:{id:Number(req.params.id)},select:{
-        adminRel:true,
-        categoryRel:true
-    }});
+    const spkg = await prisma.package.findUnique({
+        where:{id:Number(req.params.id)},
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            inclusion:true,
+            exclusion:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            pc:true
+        }
+    });
     if(spkg!=0){
         res.status(200).json(spkg);
     }
     else{
         res.status(404).json({msg:"No Packages Available"})
     }
-})
+});
 
 router.get('/destination',async (req,res)=>{
-    const dest = await prisma.destination.findMany({select:{
-        adminRel:true,
-        categoryRel:true
-    }});
+    const dest = await prisma.destination.findMany({
+    
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            des:true
+        }
+    });
     if(dest!=0){
         res.status(200).json(dest);
     }
@@ -114,20 +165,34 @@ router.get('/destination',async (req,res)=>{
         res.status(404).json({msg:"No Destination Packages Available"})
     }
   
-})
+});
 
 router.get('/destination/:id',async (req,res)=>{
-    const dest = await prisma.destination.findUnique({where:{id:Number(req.params.id)},select:{
-        adminRel:true,
-        categoryRel:true
-    }});
+    const dest = await prisma.destination.findUnique({
+        where:{id:Number(req.params.id)},
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            des:true
+        }
+    });
     if(dest!=0){
         res.status(200).json(dest);
     }
     else{
         res.status(404).json({msg:"No Destination Packages Available"})
     }
-})
-
+});
 
 module.exports = router;

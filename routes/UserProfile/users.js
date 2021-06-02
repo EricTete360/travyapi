@@ -139,6 +139,6 @@ router.get('/getInfo',verifyToken,(req,res)=>{
         mobile:req.user.mobile,
         email:req.user.email,
     }); 
-})
+});
 
 module.exports = router;

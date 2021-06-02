@@ -18,9 +18,28 @@ const transporter = nodemailer.createTransport({
   });
 const verifyAdminToken = require('../../middleware/verifyJWTsuperadmin');
 
-
+// Package
 router.get('/package',async (req,res)=>{
-    const pkg = await prisma.package.findMany({where:{adminId:req.user.id}});
+    const pkg = await prisma.package.findMany({
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            inclusion:true,
+            exclusion:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            pc:true
+        }
+    });
     if(pkg!=0){
         res.status(200).json(pkg);
     }
@@ -28,17 +47,37 @@ router.get('/package',async (req,res)=>{
         res.status(404).json({msg:"No Packages Available"})
     }
   
-})
+});
 
 router.get('/package/:id',async (req,res)=>{
-    const spkg = await prisma.package.findUnique({where:{id:Number(req.params.id)}});
+    const spkg = await prisma.package.findUnique({
+        where:{id:Number(req.params.id)},
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            inclusion:true,
+            exclusion:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            pc:true
+        }
+    });
     if(spkg!=0){
         res.status(200).json(spkg);
     }
     else{
         res.status(404).json({msg:"No Packages Available"})
     }
-})
+});
 
 router.post('/addpackage',(req,res)=>{
 
@@ -60,9 +99,8 @@ router.post('/addpackage',(req,res)=>{
         longitude:req.body.longitude,
         inclusion:req.body.inclusion,
         exclusion:req.body.exclusion,
-        adminId:req.body.adminId,
+        adminuserId:Number(req.body.adminuserId),
         status:req.body.status,
-        categoryId:req.body.categoryId,
         type:req.body.type,
     };
     prisma.package.create({
@@ -72,11 +110,10 @@ router.post('/addpackage',(req,res)=>{
 
 });
 
-
 router.put('/editpackage/:id',(req,res)=>{
 
 
-     const {title,subtitle,description,images,videoURL,inclusion,exclusion,price,location,longitude,latitude,type,status} = req.body ;
+    const {title,subtitle,description,images,videoURL,inclusion,exclusion,price,location,longitude,latitude,type,status} = req.body ;
 
     if (!title||!subtitle||!description||!price||!location||!inclusion||!exclusion||!status||!longitude||!latitude||!type) {
       return res.status(422).json({ error:"All Fields Required" });
@@ -94,18 +131,38 @@ router.put('/editpackage/:id',(req,res)=>{
         longitude:req.body.longitude,
         inclusion:req.body.inclusion,
         exclusion:req.body.exclusion,
-        adminId:req.body.adminId,
+        adminuserId:Number(req.body.adminuserId),
         status:req.body.status,
-        categoryId:req.body.categoryId,
         type:req.body.type,
     };
 
-    prisma.package.update({where:{ id : Number(req.params.id) },data:profile})
+    prisma.package.update({where:{ id : Number(req.params.id) },data:pkg})
                       .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
                       .catch((e)=>{ res.status(406).json(e); });
 });
+router.post('/addPackageCategory',async (req,res)=>{
+    const {title,description,status} = req.body ;
+
+    if (!title||!description||!status) {
+      return res.status(422).json({ error:"All Fields Required" });
+    }
+    const cat = {
+        title:req.body.title,
+        description:req.body.description,
+        status:Boolean(req.body.status),
+        adminuserId:Number(req.body.adminuserId),
+        pkId:Number(req.body.pkId)
+    };
+    prisma.packageCategory.create({
+        data:cat
+    }).then((obj)=>{
+        res.status(200).json({obj,mes:"Data Entered Successfully"})
+    }).catch((err)=>{ res.status(406).json(err); })
+}); 
 
 
+
+// Destination
 router.post('/adddestination',(req,res)=>{
 
     const {title,subtitle,description,images,videoURL,price,location,longitude,latitude,type,status} = req.body ;
@@ -124,9 +181,8 @@ router.post('/adddestination',(req,res)=>{
         location:req.body.location,
         latitude:req.body.latitude,
         longitude:req.body.longitude,
-        adminId:req.body.adminId,
+        adminuserId:Number(req.body.adminuserId),
         status:req.body.status,
-        categoryId:req.body.categoryId,
         type:req.body.type,
     };
     prisma.destination.create({
@@ -136,13 +192,12 @@ router.post('/adddestination',(req,res)=>{
 
 });
 
-
 router.put('/editdestination/:id',(req,res)=>{
 
 
-     const {title,subtitle,description,images,videoURL,inclusion,exclusion,price,location,longitude,latitude,type,status} = req.body ;
+     const {title,subtitle,description,images,videoURL,price,location,longitude,latitude,type,status} = req.body ;
 
-    if (!title||!subtitle||!description||!price||!location||!inclusion||!exclusion||!status||!longitude||!latitude||!type) {
+    if (!title||!subtitle||!description||!price||!location||!status||!longitude||!latitude||!type) {
       return res.status(422).json({ error:"All Fields Required" });
     }
   
@@ -156,19 +211,35 @@ router.put('/editdestination/:id',(req,res)=>{
         location:req.body.location,
         latitude:req.body.latitude,
         longitude:req.body.longitude,
-        adminId:req.body.adminId,
+        adminuserId:Number(req.body.adminuserId),
         status:req.body.status,
-        categoryId:req.body.categoryId,
         type:req.body.type,
     };
 
     prisma.destination.update({where:{ id : Number(req.params.id) },data:pkg})
-                      .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
+                      .then((msg)=>{res.status(200).json({msg,mes:"Data Updated Successfully"})})
                       .catch((e)=>{ res.status(406).json(e); });
 }); 
 
 router.get('/destination',async (req,res)=>{
-    const dest = await prisma.destination.findMany({where:{adminId:req.user.id}});
+    const dest = await prisma.destination.findMany({
+        select:{
+            id:true,
+            title:true,
+            subtitle:true,
+            videoURL:true,
+            images:true,
+            description:true,
+            price:true,
+            location:true,
+            latitude:true, 
+            longitude:true, 
+            type:true,
+            status:true,
+            aduser:true, 
+            des:true
+        }
+    });
     if(dest!=0){
         res.status(200).json(dest);
     }
@@ -188,7 +259,7 @@ router.get('/destination/:id',async (req,res)=>{
     }
 });
 
-router.post('/addCategory',async (req,res)=>{
+router.post('/addDestinationCategory',async (req,res)=>{
     const {title,description,status} = req.body ;
 
     if (!title||!description||!status) {
@@ -196,47 +267,19 @@ router.post('/addCategory',async (req,res)=>{
     }
     const cat = {
         title:req.body.title,
-        
         description:req.body.description,
-      
-        status:req.body.status,
+        status:Boolean(req.body.status),
+        adminuserId:Number(req.body.adminuserId),
+        desId:Number(req.body.desId)
     };
-    prisma.category.create({
+    prisma.destinationCategory.create({
         data:cat
     }).then((obj)=>{
         res.status(200).json({obj,mes:"Data Entered Successfully"})
     }).catch((err)=>{ res.status(406).json(err); })
 }); 
 
-router.get('/category',async (req,res)=>{
-    const cate = await prisma.category.findMany();
-    if (cate!=0) {
-        res.status(200).json(cate);
-    }
-    else{
-        res.status(404).json({msg:"No Categories Available"});
-    }
-});
-
-router.put('/updatecategory/:id',async (res,req)=>{
-    const {title,description,status} = req.body ;
-
-    if (!title||!description||!status) {
-      return res.status(422).json({ error:"All Fields Required" });
-    }
-    const ucat = {
-        title:req.body.title,
-        
-        description:req.body.description,
-      
-        status:req.body.status,
-    };
-
-    prisma.category.update({where:{ id : Number(req.params.id) },data:ucat})
-                      .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
-                      .catch((e)=>{ res.status(406).json(e); });
-});
-
+// Tour Operator
 router.post("/addTourOperator",async (req,res)=>{
     const {email,name,mobile,password} = req.body ;
 
@@ -286,7 +329,11 @@ router.get("/TourOperatorList",async (req,res)=>{
 });
 
 router.get("/TourOperatorList/:id",async (req,res)=>{
-    const dest = await prisma.destination.findUnique({where:{id:Number(req.params.id)}});
+    const dest = await prisma.adminUser.findUnique({where:{id:Number(req.params.id)},select:{
+        name:true,
+        email:true,
+        mobile:true, 
+        admuser:true}});
     if(dest!=0){
         res.status(200).json(dest);
     }
@@ -295,5 +342,4 @@ router.get("/TourOperatorList/:id",async (req,res)=>{
     }
 });
 
-// router.get("/")
 module.exports = router;

@@ -8,6 +8,8 @@ CREATE TABLE `user` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `user.email_unique`(`email`),
+    UNIQUE INDEX `user.mobile_unique`(`mobile`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -35,6 +37,7 @@ CREATE TABLE `otpprofile` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `otpprofile.otp_unique`(`otp`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -48,6 +51,8 @@ CREATE TABLE `adminuser` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `adminuser.email_unique`(`email`),
+    UNIQUE INDEX `adminuser.mobile_unique`(`mobile`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -77,17 +82,35 @@ CREATE TABLE `superadminuser` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
+    UNIQUE INDEX `superadminuser.email_unique`(`email`),
+    UNIQUE INDEX `superadminuser.mobile_unique`(`mobile`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `category` (
+CREATE TABLE `PackageCategories` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(191) NOT NULL,
     `description` VARCHAR(191) NOT NULL,
-    `status` VARCHAR(191) NOT NULL,
+    `status` BOOLEAN NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `adminuserId` INTEGER NOT NULL,
+    `pkId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `DestinationCategories` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NOT NULL,
+    `status` BOOLEAN NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `adminuserId` INTEGER NOT NULL,
+    `desId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -108,10 +131,9 @@ CREATE TABLE `package` (
     `longitude` VARCHAR(191) NOT NULL,
     `type` VARCHAR(191) NOT NULL,
     `status` VARCHAR(191) NOT NULL,
-    `adminId` INTEGER NOT NULL,
-    `categoryId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `adminuserId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -130,8 +152,7 @@ CREATE TABLE `destination` (
     `longitude` VARCHAR(191) NOT NULL,
     `type` VARCHAR(191) NOT NULL,
     `status` VARCHAR(191) NOT NULL,
-    `adminId` INTEGER NOT NULL,
-    `categoryId` INTEGER NOT NULL,
+    `adminuserId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
 
@@ -139,22 +160,28 @@ CREATE TABLE `destination` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `otpprofile` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `PackageCategories` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `destination` ADD FOREIGN KEY (`adminId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `destination` ADD FOREIGN KEY (`categoryId`) REFERENCES `category`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `PackageCategories` ADD FOREIGN KEY (`pkId`) REFERENCES `package`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `adminuserprofile` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `package` ADD FOREIGN KEY (`adminId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `DestinationCategories` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `package` ADD FOREIGN KEY (`categoryId`) REFERENCES `category`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `DestinationCategories` ADD FOREIGN KEY (`desId`) REFERENCES `destination`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `destination` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `otpprofile` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `package` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `userprofile` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
