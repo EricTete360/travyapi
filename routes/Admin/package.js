@@ -261,21 +261,10 @@ router.get('/packageCategoryList',verifyAdminToken,async (req,res)=>{
         where:{adminuserId:req.user.id},
         select:{
             id:true,
-            title:true,
-            subtitle:true,
-            videoURL:true,
-            images:true,
-            description:true,
-            inclusion:true,
-            exclusion:true,
-            price:true,
-            location:true,
-            latitude:true, 
-            longitude:true, 
-            type:true,
-            status:true,
+            title:true,                     
+            description:true,             
+            status :true,
             aduser:true, 
-            pc:true
         }
     });
     if(pkg!=0){
@@ -347,6 +336,7 @@ router.get('/categorylistdestination',verifyAdminToken,async (req,res)=>{
     const pkg = await prisma.destinationCategory.findMany({
         where:{adminuserId:req.user.id},
         select:{
+            id:true,
             title:true,                     
             description:true,             
             status :true,
@@ -415,7 +405,7 @@ router.delete('/deleteDestinationCategory/:id',verifyAdminToken, async (req,res)
     
 });
 
-
+// admin Profile
 
 router.get('/adprofileView',verifyAdminToken,async (req,res)=>{
     const profile = await prisma.adminUserProfile.findUnique({
