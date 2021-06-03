@@ -140,6 +140,28 @@ router.put('/editpackage/:id',(req,res)=>{
                       .then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
                       .catch((e)=>{ res.status(406).json(e); });
 });
+
+router.delete('/deletepackage/:id', async (req,res)=>{
+
+    const pack= await prisma.package.delete({
+        where:{
+            id:Number(req.params.id)
+        }
+    });
+
+    res.status(200).json({post,msg:"Pacakge Deleted"})
+    
+});
+
+router.get('/listPackageCategory',async (req,res)=>{
+
+    prisma.packageCategory.findMany().then((obj)=>{
+        res.status(200).json({obj})
+    }).catch((err)=>{ res.status(406).json(err); })
+
+}); 
+
+
 router.post('/addPackageCategory',async (req,res)=>{
     const {title,description,status} = req.body ;
 
@@ -160,7 +182,39 @@ router.post('/addPackageCategory',async (req,res)=>{
     }).catch((err)=>{ res.status(406).json(err); })
 }); 
 
+router.put('/editPackageCategory/:id',async (req,res)=>{
+    const {title,description,status} = req.body ;
 
+    if (!title||!description||!status) {
+      return res.status(422).json({ error:"All Fields Required" });
+    }
+    const cat = {
+        title:req.body.title,
+        description:req.body.description,
+        status:Boolean(req.body.status),
+        adminuserId:Number(req.body.adminuserId),
+        pkId:Number(req.body.pkId)
+    };
+    prisma.packageCategory.update({where:{
+        id:Number(req.params.id)
+    },data:cat
+    }).then((obj)=>{
+        res.status(200).json({obj,mes:"Data Entered Successfully"})
+    }).catch((err)=>{ res.status(406).json(err); })
+}); 
+
+
+router.delete('/deletePackageCategory/:id', async (req,res)=>{
+
+    const pack= await prisma.packageCategory.delete({
+        where:{
+            id:Number(req.params.id)
+        }
+    });
+
+    res.status(200).json({post,msg:"Pacakge Deleted"})
+    
+});
 
 // Destination
 router.post('/adddestination',(req,res)=>{
@@ -221,6 +275,18 @@ router.put('/editdestination/:id',(req,res)=>{
                       .catch((e)=>{ res.status(406).json(e); });
 }); 
 
+router.delete('/deletedestination/:id', async (req,res)=>{
+
+    const pack= await prisma.destination.delete({
+        where:{
+            id:Number(req.params.id)
+        }
+    });
+
+    res.status(200).json({post,msg:"Pacakge Deleted"})
+    
+});
+
 router.get('/destination',async (req,res)=>{
     const dest = await prisma.destination.findMany({
         select:{
@@ -259,6 +325,14 @@ router.get('/destination/:id',async (req,res)=>{
     }
 });
 
+router.get('/listDestinationCategory',async (req,res)=>{
+
+    prisma.destinationCategory.findMany().then((obj)=>{
+        res.status(200).json({obj})
+    }).catch((err)=>{ res.status(406).json(err); })
+
+}); 
+
 router.post('/addDestinationCategory',async (req,res)=>{
     const {title,description,status} = req.body ;
 
@@ -278,7 +352,38 @@ router.post('/addDestinationCategory',async (req,res)=>{
         res.status(200).json({obj,mes:"Data Entered Successfully"})
     }).catch((err)=>{ res.status(406).json(err); })
 }); 
+router.put('/editDestinationCategory/:id',async (req,res)=>{
+    const {title,description,status} = req.body ;
 
+    if (!title||!description||!status) {
+      return res.status(422).json({ error:"All Fields Required" });
+    }
+    const cat = {
+        title:req.body.title,
+        description:req.body.description,
+        status:Boolean(req.body.status),
+        adminuserId:Number(req.body.adminuserId),
+        desId:Number(req.body.desId)
+    };
+    prisma.destinationCategory.update({
+        where:{ id : Number(req.params.id) },
+        data:cat
+    }).then((obj)=>{
+        res.status(200).json({obj,mes:"Data Entered Successfully"})
+    }).catch((err)=>{ res.status(406).json(err); })
+}); 
+
+router.delete('/deleteDestinationCategory/:id', async (req,res)=>{
+
+    const pack= await prisma.destinationCategory.delete({
+        where:{
+            id:Number(req.params.id)
+        }
+    });
+
+    res.status(200).json({post,msg:"Pacakge Deleted"})
+    
+});
 // Tour Operator
 router.post("/addTourOperator",async (req,res)=>{
     const {email,name,mobile,password} = req.body ;
