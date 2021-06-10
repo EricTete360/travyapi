@@ -28,7 +28,7 @@ router.get('/package',verifyAdminToken,async (req,res)=>{
             type:true,
             status:true,
             aduser:true, 
-            pc:true
+            packcat:true
         }
     });
     if(pkg!=0){
@@ -43,7 +43,7 @@ router.get('/package',verifyAdminToken,async (req,res)=>{
 router.get('/package/:id',verifyAdminToken,async (req,res)=>{
     const spkg = await prisma.package.findUnique({
         where:{id:Number(req.params.id)},
-        select:{pc:true}
+        select:{packcat:true}
     });
     if(spkg!=0){
         res.status(200).json(spkg);
@@ -61,24 +61,26 @@ router.post('/addpackage',verifyAdminToken,(req,res)=>{
       return res.status(422).json({ error:"All Fields Required" });
     }
   
-    const pkg = {
-        title:req.body.title,
-        subtitle:req.body.subtitle,
-        description:req.body.description,
-        images:req.body.images,
-        videoURL:req.body.videoURL,
-        price:req.body.price,
-        location:req.body.location,
-        latitude:req.body.latitude,
-        longitude:req.body.longitude,
-        inclusion:req.body.inclusion,
-        exclusion:req.body.exclusion,
-        adminuserId:Number(req.user.id),
-        status:req.body.status,
-        type:req.body.type,
-    };
+  
     prisma.package.create({
-        data:pkg
+        data:{
+            title:req.body.title,
+            subtitle:req.body.subtitle,
+            description:req.body.description,
+            images:req.body.images,
+            videoURL:req.body.videoURL,
+            price:req.body.price,
+            location:req.body.location,
+            latitude:req.body.latitude,
+            longitude:req.body.longitude,
+            inclusion:req.body.inclusion,
+            exclusion:req.body.exclusion,
+            adminuserId:Number(req.user.id),
+            status:req.body.status,
+            type:req.body.type,
+            packId:Number(req.body.packId)
+           
+        }
     }).then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
     .catch((e)=>{ res.status(406).json(e); });
 
@@ -108,6 +110,7 @@ router.put('/editpackage/:id',verifyAdminToken,(req,res)=>{
         adminuserId:Number(req.user.id),
         status:req.body.status,
         type:req.body.type,
+        packId:Number(req.body.packId)
     };
 
     prisma.package.update({where:{ id : Number(req.params.id) },data:pkg})
@@ -123,7 +126,7 @@ router.delete('/deletepackage/:id',verifyAdminToken, async (req,res)=>{
         }
     });
 
-    res.status(200).json({post,msg:"Pacakge Deleted"})
+    res.status(200).json({msg:"Pacakge Deleted"})
     
 });
 
@@ -150,6 +153,7 @@ router.post('/adddestination',verifyAdminToken,(req,res)=>{
         adminuserId:Number(req.user.id),
         status:req.body.status,
         type:req.body.type,
+        destId:Number(req.body.destId)
     };
     prisma.destination.create({
         data:dest
@@ -180,6 +184,7 @@ router.put('/editdestination/:id',verifyAdminToken,(req,res)=>{
         adminuserId:Number(req.user.id),
         status:req.body.status,
         type:req.body.type,
+        destId:Number(req.body.destId)
     };
 
     prisma.destination.update({where:{ id : Number(req.params.id) },data:pkg})
@@ -204,7 +209,7 @@ router.get('/destination',verifyAdminToken,async (req,res)=>{
             type:true,
             status:true,
             aduser:true, 
-            des:true
+            destcat:true 
         }
     });
     if(dest!=0){
@@ -251,13 +256,13 @@ router.delete('/deletedestination/:id',verifyAdminToken, async (req,res)=>{
         }
     });
 
-    res.status(200).json({post,msg:"Pacakge Deleted"})
+    res.status(200).json({msg:"Pacakge Deleted"})
     
 });
 
 // Package Category
 router.get('/packageCategoryList',verifyAdminToken,async (req,res)=>{
-    const pkg = await prisma.package.findMany({
+    const pkg = await prisma.packageCategory.findMany({
         where:{adminuserId:req.user.id},
         select:{
             id:true,
@@ -271,7 +276,7 @@ router.get('/packageCategoryList',verifyAdminToken,async (req,res)=>{
         res.status(200).json(pkg);
     }
     else{
-        res.status(404).json({msg:"No Packages Available"})
+        res.status(404).json({msg:"No Packages Categories Available"})
     }
   
 });
@@ -286,11 +291,20 @@ router.post('/addPackageCategory',verifyAdminToken,async (req,res)=>{
         title:req.body.title,
         description:req.body.description,
         status:Boolean(req.body.status),
-        adminuserId:req.user.id,
-        pkId:Number(req.body.pkId)
+        // adminuserId:Number(req.user.id),
+        
     };
     prisma.packageCategory.create({
-        data:cat
+        data:{
+            title:req.body.title,
+            description:req.body.description,
+            status:Boolean(req.body.status),
+            aduser:{
+                connect:{
+                    id:Number(req.user.id)
+                }
+            }
+        }
     }).then((obj)=>{
         res.status(200).json({obj,mes:"Data Entered Successfully"})
     }).catch((err)=>{ res.status(406).json(err); })
@@ -317,7 +331,6 @@ router.put('/editPackageCategory/:id',verifyAdminToken,async (req,res)=>{
     }).catch((err)=>{ res.status(406).json(err); })
 }); 
 
-
 router.delete('/deletePackageCategory/:id',verifyAdminToken, async (req,res)=>{
 
     const pack= await prisma.packageCategory.delete({
@@ -326,7 +339,7 @@ router.delete('/deletePackageCategory/:id',verifyAdminToken, async (req,res)=>{
         }
     });
 
-    res.status(200).json({post,msg:"Pacakge Deleted"})
+    res.status(200).json({msg:"Pacakge Deleted"})
     
 });
 
@@ -358,15 +371,24 @@ router.post('/addDestinationCategory',verifyAdminToken,async (req,res)=>{
     if (!title||!description||!status) {
       return res.status(422).json({ error:"All Fields Required" });
     }
-    const cat = {
-        title:req.body.title,
-        description:req.body.description,
-        status:Boolean(req.body.status),
-        adminuserId:req.user.id,
-        desId:Number(req.body.desId)
-    };
+    // const cat = {
+    //     title:req.body.title,
+    //     description:req.body.description,
+    //     status:Boolean(req.body.status),
+    //     adminuserId:req.user.id,
+    //     desId:Number(req.body.desId)
+    // };
     prisma.destinationCategory.create({
-        data:cat
+        data:{
+            title:req.body.title,
+            description:req.body.description,
+            status:Boolean(req.body.status),
+            aduser:{
+                connect:{
+                    id:Number(req.user.id)
+                }
+            }
+        }
     }).then((obj)=>{
         res.status(200).json({obj,mes:"Data Entered Successfully"})
     }).catch((err)=>{ res.status(406).json(err); })
@@ -401,7 +423,7 @@ router.delete('/deleteDestinationCategory/:id',verifyAdminToken, async (req,res)
         }
     });
 
-    res.status(200).json({post,msg:"Pacakge Deleted"})
+    res.status(200).json({msg:"Pacakge Deleted"})
     
 });
 
@@ -468,5 +490,6 @@ router.put('/editadprofile/:id',verifyAdminToken,(req,res)=>{
                       .catch((e)=>{ res.status(406).json(e); });
 });
 
-// router.get("/")
+
+
 module.exports = router;

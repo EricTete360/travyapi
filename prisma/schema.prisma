@@ -21,8 +21,14 @@ model User {
   password         String
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  // Relation
   profile          UserProfile[]
   otps             OtpProfile[]
+  enqPack          EnquiryPackage[]
+  enqDest          EnquiryDestination[]
+  rp               ReviewPackage[]
+  rd               ReviewDestination[]
+
 }
 
 model UserProfile {
@@ -59,13 +65,16 @@ model AdminUser {
   password           String
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
-  admuser            AdminUserProfile[]
  
-  packagect            PackageCategory[]
-  destinationct        DestinationCategory[]
+  // Relation
+
+  admuser            AdminUserProfile[]
+  packagect          PackageCategory[]
+  destinationct      DestinationCategory[]
   package            Package[]
   destination        Destination[]
-
+  enqPack            EnquiryPackage[]
+  enqDest            EnquiryDestination[]
 
 }
 
@@ -106,8 +115,9 @@ model PackageCategory {
   updatedAt                 DateTime           @updatedAt
   aduser                    AdminUser          @relation(fields: [adminuserId], references: [id])
   adminuserId               Int  
-  package                   Package            @relation(fields: [pkId], references: [id])
-  pkId                      Int 
+  // package                   Package            @relation(fields: [pkId], references: [id])
+  package                   Package[]            
+  // pkId                      Int 
 
   @@map("PackageCategories")
 }
@@ -121,8 +131,9 @@ model DestinationCategory {
   updatedAt                 DateTime               @updatedAt
   aduser                    AdminUser              @relation(fields: [adminuserId], references: [id])
   adminuserId               Int  
-  destination               Destination            @relation(fields: [desId], references: [id])
-  desId                     Int 
+  // destination               Destination            @relation(fields: [desId], references: [id])
+  destination               Destination[]            
+  // desId                     Int 
 
 
   @@map("DestinationCategories")
@@ -149,7 +160,12 @@ model Package {
   updatedAt        DateTime     @updatedAt 
   aduser           AdminUser    @relation(fields: [adminuserId], references: [id])
   adminuserId      Int  
-  pc               PackageCategory[]
+  packcat          PackageCategory @relation(fields: [packId], references: [id])
+  packId           Int  
+  enqPack          EnquiryPackage[]
+  rp               ReviewPackage[]
+ 
+
 }
 
 model Destination {
@@ -170,5 +186,60 @@ model Destination {
   adminuserId      Int  
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
-  des              DestinationCategory[]
+  destcat          DestinationCategory @relation(fields: [destId], references: [id])
+  destId           Int 
+  enqDest          EnquiryDestination[]
+  rd               ReviewDestination[]
+}
+
+model EnquiryPackage {
+  id                        Int                   @id @default(autoincrement())
+  message                   String
+  createdAt                 DateTime               @default(now())
+  updatedAt                 DateTime               @updatedAt
+  aduser                    AdminUser              @relation(fields: [adminuserId], references: [id])
+  adminuserId               Int
+  user                      User                   @relation(fields: [userId], references: [id])
+  userId                    Int  
+  package                   Package                 @relation(fields: [pkgId], references: [id])
+  pkgId                     Int 
+
+  @@map("enquiryPackage")
+
+}
+
+model EnquiryDestination {
+  id                        Int                   @id @default(autoincrement())
+  message                   String
+  createdAt                 DateTime               @default(now())
+  updatedAt                 DateTime               @updatedAt
+  aduser                    AdminUser              @relation(fields: [adminuserId], references: [id])
+  adminuserId               Int
+  user                      User                   @relation(fields: [userId], references: [id])
+  userId                    Int  
+  destination               Destination            @relation(fields: [desId], references: [id])
+  desId                     Int 
+
+  @@map("enquiryDestination")
+
+}
+
+model ReviewPackage{
+  @@map("reviewPackage")
+  id                        Int                   @id @default(autoincrement())
+  starpoint                 String
+  user                      User                   @relation(fields: [userId], references: [id])
+  userId                    Int 
+  package                   Package                 @relation(fields: [pkgId], references: [id])
+  pkgId                     Int 
+}
+
+model ReviewDestination{
+  @@map("reviewDestination")
+  id                        Int                   @id @default(autoincrement())
+  starpoint                 String
+  user                      User                   @relation(fields: [userId], references: [id])
+  userId                    Int 
+  destination               Destination            @relation(fields: [desId], references: [id])
+  desId                     Int 
 }

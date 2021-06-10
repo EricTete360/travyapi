@@ -102,6 +102,7 @@ router.post('/addpackage',(req,res)=>{
         adminuserId:Number(req.body.adminuserId),
         status:req.body.status,
         type:req.body.type,
+        packId:Number(req.body.packId)
     };
     prisma.package.create({
         data:pkg
@@ -173,7 +174,7 @@ router.post('/addPackageCategory',async (req,res)=>{
         description:req.body.description,
         status:Boolean(req.body.status),
         adminuserId:Number(req.body.adminuserId),
-        pkId:Number(req.body.pkId)
+        // pkId:Number(req.body.pkId)
     };
     prisma.packageCategory.create({
         data:cat
@@ -238,6 +239,7 @@ router.post('/adddestination',(req,res)=>{
         adminuserId:Number(req.body.adminuserId),
         status:req.body.status,
         type:req.body.type,
+        destId:Number(req.body.destId)
     };
     prisma.destination.create({
         data:dest
@@ -344,7 +346,7 @@ router.post('/addDestinationCategory',async (req,res)=>{
         description:req.body.description,
         status:Boolean(req.body.status),
         adminuserId:Number(req.body.adminuserId),
-        desId:Number(req.body.desId)
+        // desId:Number(req.body.desId)
     };
     prisma.destinationCategory.create({
         data:cat

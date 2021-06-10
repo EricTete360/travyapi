@@ -96,7 +96,6 @@ CREATE TABLE `PackageCategories` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `adminuserId` INTEGER NOT NULL,
-    `pkId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -110,7 +109,6 @@ CREATE TABLE `DestinationCategories` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `adminuserId` INTEGER NOT NULL,
-    `desId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -134,6 +132,7 @@ CREATE TABLE `package` (
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `adminuserId` INTEGER NOT NULL,
+    `packId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -155,6 +154,53 @@ CREATE TABLE `destination` (
     `adminuserId` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
+    `destId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `enquiryPackage` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `message` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `adminuserId` INTEGER NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `pkgId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `enquiryDestination` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `message` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+    `adminuserId` INTEGER NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `desId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `reviewPackage` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `starpoint` VARCHAR(191) NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `pkgId` INTEGER NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `reviewDestination` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `starpoint` VARCHAR(191) NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `desId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -163,25 +209,55 @@ CREATE TABLE `destination` (
 ALTER TABLE `PackageCategories` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PackageCategories` ADD FOREIGN KEY (`pkId`) REFERENCES `package`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `enquiryDestination` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `adminuserprofile` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `enquiryDestination` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `enquiryDestination` ADD FOREIGN KEY (`desId`) REFERENCES `destination`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `reviewPackage` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `reviewPackage` ADD FOREIGN KEY (`pkgId`) REFERENCES `package`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `DestinationCategories` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `DestinationCategories` ADD FOREIGN KEY (`desId`) REFERENCES `destination`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE `destination` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `otpprofile` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `destination` ADD FOREIGN KEY (`destId`) REFERENCES `DestinationCategories`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `package` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `package` ADD FOREIGN KEY (`packId`) REFERENCES `PackageCategories`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `otpprofile` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `enquiryPackage` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `enquiryPackage` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `enquiryPackage` ADD FOREIGN KEY (`pkgId`) REFERENCES `package`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `reviewDestination` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `reviewDestination` ADD FOREIGN KEY (`desId`) REFERENCES `destination`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `userprofile` ADD FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `adminuserprofile` ADD FOREIGN KEY (`adminuserId`) REFERENCES `adminuser`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

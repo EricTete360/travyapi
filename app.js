@@ -10,6 +10,8 @@ const port = process.env.PORT || 8180;
 app.use(cors());
 
 // Routes Directory
+const userEnquiry = require("./routes/UserProfile/enquiry");
+const userReview = require("./routes/UserProfile/review");
 const userAuth = require("./routes/UserProfile/users");
 const userProfileAuth = require("./routes/UserProfile/profile");
 const userOtpAuth = require("./routes/UserProfile/otp");
@@ -32,6 +34,8 @@ app.use(morgan('dev'));
 
 // Using Routes
 app.use("/api/user",userAuth);
+app.use("/api/user/review",userReview);
+app.use("/api/user/enquiry",userEnquiry);
 app.use("/api/user/inside",userProfileAuth);
 app.use("/api/user/mobile",userOtpAuth);
 app.use("/api/user/navigation",userSearch);
