@@ -31,7 +31,7 @@ router.get('/search-package',async (req,res)=>{
             type:true,
             status:true,
             aduser:true, 
-            pc:true
+            packcat:true
         }
     });
     if(pkg!=0){
@@ -62,7 +62,7 @@ router.get('/search-package/:id',async (req,res)=>{
             type:true,
             status:true,
             aduser:true, 
-            pc:true
+            packcat:true
         }
     });
     if(spkg!=0){
@@ -90,7 +90,7 @@ router.get('/search-destination',async (req,res)=>{
             type:true,
             status:true,
             aduser:true, 
-            des:true
+            destcat:true
         }
     });
     if(dest!=0){
@@ -119,7 +119,7 @@ router.get('/search-destination/:id',async (req,res)=>{
             type:true,
             status:true,
             aduser:true, 
-            des:true
+            destcat:true
         }
     });
     if(dest!=0){
