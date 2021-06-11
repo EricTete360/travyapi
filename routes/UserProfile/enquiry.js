@@ -19,10 +19,8 @@ const verifyToken = require('../../middleware/verifyJWT');
 
 
 router.get('/enquiryView',verifyToken,async (req,res)=>{
-    const enqPackage = await prisma.enquiryPackage.findUnique({
-        where:{ user:{connect:{
-            id:req.user.id
-        } }},
+    const enqPackage = await prisma.enquiryPackage.findMany({
+        where:{ userId  : Number(req.user.id) },
         select:{
             message:true,
             user:true,
