@@ -33,11 +33,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 // app.use(cors());
 
-app.use('/',serveStatic(path.join(__dirname,'./build')))
 
-app.get(/.*/,function(req,res){
-    res.sendFile(path.join(__dirname,'./build/index.html'))
-})
 
 // Using Routes
 app.use("/api/user",userAuth);
@@ -51,6 +47,12 @@ app.use("/api/admin/package",adminPackage);
 app.use("/api/superAdmin",superAdminUserauth);
 app.use("/api/superAdmin/package",superAdminPackage);
 
+
+app.use('/',express.static(path.join(__dirname,'./build')))
+
+app.get(/.*/,function(req,res){
+    res.sendFile(path.join(__dirname,'./build/index.html'))
+})
 
 
 app.listen(port,()=>{
