@@ -2,7 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const morgan = require('morgan'); 
-
+const serveStatic = require('serve-static');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 8180;
@@ -22,6 +23,7 @@ const adminUserauth = require("./routes/Admin/auth");
 const adminPackage = require("./routes/Admin/package");
 
 
+
 // Body Parser
 // app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(bodyParser.json());
@@ -31,6 +33,11 @@ app.use(express.json());
 app.use(morgan('dev'));
 // app.use(cors());
 
+app.use('/',serveStatic(path.join(__dirname,'./build')))
+
+app.get(/.*/,function(req,res){
+    res.sendFile(path.join(__dirname,'./build/index.html'))
+})
 
 // Using Routes
 app.use("/api/user",userAuth);
