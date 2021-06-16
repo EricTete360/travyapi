@@ -135,6 +135,7 @@ router.put('/editpackage/:id',(req,res)=>{
         adminuserId:Number(req.body.adminuserId),
         status:req.body.status,
         type:req.body.type,
+        packId:Number(req.body.packId)
     };
 
     prisma.package.update({where:{ id : Number(req.params.id) },data:pkg})
@@ -194,7 +195,7 @@ router.put('/editPackageCategory/:id',async (req,res)=>{
         description:req.body.description,
         status:Boolean(req.body.status),
         adminuserId:Number(req.body.adminuserId),
-        pkId:Number(req.body.pkId)
+        // pkId:Number(req.body.pkId)
     };
     prisma.packageCategory.update({where:{
         id:Number(req.params.id)
@@ -270,6 +271,7 @@ router.put('/editdestination/:id',(req,res)=>{
         adminuserId:Number(req.body.adminuserId),
         status:req.body.status,
         type:req.body.type,
+        destId:Number(req.body.destId)
     };
 
     prisma.destination.update({where:{ id : Number(req.params.id) },data:pkg})
@@ -409,18 +411,19 @@ router.post("/addTourOperator",async (req,res)=>{
                     prisma.adminUser.create({
                         data:userdata
                     }).then((msg)=>{
+                        console.log(msg)
                         transporter.sendMail({
-                        to:data.email,
+                        to:msg.email,
                         from:'noreply@knowbastar.com',
                         subject:'User Access Credentials',
                         html:`
                             <h1>Your Access Credentials</h1><br/>
-                            <h2>Email : ${usemail}</h2><br/>
-                            <h2>Password : ${usepass} </h2><br/>
+                            <h2>Email : ${email}</h2><br/>
+                            <h2>Password : ${password} </h2><br/>
                         `
                     });
                         res.status(200).json({msg,mes:"Data Entered Successfully"})})
-                       .catch((e)=>{ res.status(406).json(e); });
+                    //    .catch((e)=>{ res.status(406).json(e); });
             }
         })
 });
