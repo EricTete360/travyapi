@@ -151,7 +151,7 @@ router.delete('/deletepackage/:id', async (req,res)=>{
         }
     });
 
-    res.status(200).json({post,msg:"Pacakge Deleted"})
+    res.status(200).json({pack,msg:"Pacakge Deleted"})
     
 });
 
@@ -214,7 +214,7 @@ router.delete('/deletePackageCategory/:id', async (req,res)=>{
         }
     });
 
-    res.status(200).json({post,msg:"Pacakge Deleted"})
+    res.status(200).json({pack,msg:"Pacakge Deleted"})
     
 });
 
@@ -287,7 +287,7 @@ router.delete('/deletedestination/:id', async (req,res)=>{
         }
     });
 
-    res.status(200).json({post,msg:"Pacakge Deleted"})
+    res.status(200).json({pack,msg:"Pacakge Deleted"})
     
 });
 
@@ -385,7 +385,7 @@ router.delete('/deleteDestinationCategory/:id', async (req,res)=>{
         }
     });
 
-    res.status(200).json({post,msg:"Pacakge Deleted"})
+    res.status(200).json({pack,msg:"Pacakge Deleted"})
     
 });
 // Tour Operator
