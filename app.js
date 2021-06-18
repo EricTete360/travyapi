@@ -24,6 +24,7 @@ const adminPackage = require("./routes/Admin/package");
 
 
 
+
 // Body Parser
 // app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(bodyParser.json());
@@ -49,10 +50,15 @@ app.use("/api/superAdmin/package",superAdminPackage);
 
 
 app.use('/',express.static(path.join(__dirname,'./build')))
+// app.use(express.static(path.join(__dirname,'./build-flutter')))
 
 app.get(/.*/,function(req,res){
     res.sendFile(path.join(__dirname,'./build/index.html'))
 })
+
+// app.get('/admin/.*',function(req,res){
+//     res.sendFile(path.join(__dirname,'./build-flutter/index.html'))
+// })
 
 
 app.listen(port,()=>{

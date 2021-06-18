@@ -4,7 +4,9 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "client":"cd flutterWeb && node app.js",
+    "dev":"concurrently \"npm start\" \"npm run client"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +15,7 @@
     "@prisma/client": "^2.23.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "concurrently": "^6.2.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
