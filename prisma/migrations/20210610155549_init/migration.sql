@@ -163,6 +163,7 @@ CREATE TABLE `destination` (
 CREATE TABLE `enquiryPackage` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `message` VARCHAR(191) NOT NULL,
+
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `adminuserId` INTEGER NOT NULL,
@@ -176,6 +177,7 @@ CREATE TABLE `enquiryPackage` (
 CREATE TABLE `enquiryDestination` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `message` VARCHAR(191) NOT NULL,
+
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updatedAt` DATETIME(3) NOT NULL,
     `adminuserId` INTEGER NOT NULL,

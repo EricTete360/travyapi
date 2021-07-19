@@ -195,6 +195,7 @@ model Destination {
 model EnquiryPackage {
   id                        Int                   @id @default(autoincrement())
   message                   String
+
   createdAt                 DateTime               @default(now())
   updatedAt                 DateTime               @updatedAt
   aduser                    AdminUser              @relation(fields: [adminuserId], references: [id])
@@ -211,6 +212,7 @@ model EnquiryPackage {
 model EnquiryDestination {
   id                        Int                   @id @default(autoincrement())
   message                   String
+
   createdAt                 DateTime               @default(now())
   updatedAt                 DateTime               @updatedAt
   aduser                    AdminUser              @relation(fields: [adminuserId], references: [id])

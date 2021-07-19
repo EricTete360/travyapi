@@ -36,7 +36,7 @@ router.post('/addReview',verifyToken,(req,res)=>{
     const revPackage = {
         userId:Number(req.user.id),
         pkgId:Number(req.body.pkgId),
-        starpoint:Number(req.body.starpoint),
+        starpoint:req.body.starpoint,
      
     };
     prisma.reviewPackage.create({
@@ -70,7 +70,7 @@ router.post('/addReviewDestination',verifyToken,(req,res)=>{
     const revDestinaion = {
         userId:Number(req.user.id),
         desId:Number(req.body.desId),
-        starpoint:Number(req.body.starpoint),
+        starpoint:req.body.starpoint,
     };
     prisma.reviewDestination.create({
         data:revDestinaion

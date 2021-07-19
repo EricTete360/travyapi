@@ -14,7 +14,8 @@ const validator = require('validator');
 const keys = require('../../config/keys');
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
-
+const SendOtp = require('sendotp');
+const sendOtp = new SendOtp('189400A4pwNR6b9IHJ609b9b4cP1');
 const verifyToken = require('../../middleware/verifyJWT');
 
 
@@ -23,6 +24,7 @@ router.get('/enquiryView',verifyToken,async (req,res)=>{
         where:{ userId  : Number(req.user.id) },
         select:{
             message:true,
+        
             user:true,
             aduser:true,
             package:true
@@ -36,7 +38,7 @@ router.post('/addEnquiry',verifyToken,(req,res)=>{
     const {message} = req.body ;
 
     if (!message) {
-      return res.status(422).json({ error:"Message Field Required" });
+      return res.status(422).json({ error:"All Field Required" });
     }
   
     const enqPackage = {
@@ -48,7 +50,10 @@ router.post('/addEnquiry',verifyToken,(req,res)=>{
     };
     prisma.enquiryPackage.create({
         data:enqPackage
-    }).then((msg)=>{res.status(200).json({msg,mes:"Data Entered Successfully"})})
+    }).then((msg)=>{
+        console.log(msg.phonetour)
+        res.status(200).json({msg,mes:"Data Entered Successfully"})
+    })
     .catch((e)=>{ res.status(406).json(e); });
 
 });
@@ -58,6 +63,7 @@ router.get('/enquiryDestinationView',verifyToken,async (req,res)=>{
         where:{ userId : Number(req.user.id) },
         select:{
             message:true,
+           
             user:true,
             aduser:true,
             destination:true
@@ -71,7 +77,7 @@ router.post('/addEnquiryDestination',verifyToken,(req,res)=>{
     const {message} = req.body ;
 
     if (!message) {
-      return res.status(422).json({ error:"Message Field Required" });
+      return res.status(422).json({ error:"All Fields Required" });
     }
   
     const enqDestination = {
@@ -79,6 +85,7 @@ router.post('/addEnquiryDestination',verifyToken,(req,res)=>{
         adminuserId:Number(req.body.adminuserId),
         desId:Number(req.body.desId),
         message:req.body.message,
+    
      
     };
     prisma.enquiryDestination.create({
